@@ -1,0 +1,53 @@
+user:
+  imageName: user-ms
+  imageVer: latest
+  svcName: user-svc
+  configMapName: user-cm
+  label:
+    app: user-service
+
+order:
+  imageName: order-ms
+  imageVer: latest
+  svcName: order-svc
+  configMapName: order-cm
+  label:
+    app: order-service
+
+postgres:
+  deployment:
+    name: postgres-dep
+  svcName: postgres
+  port: 5432
+  targetPort: 5432
+  label:
+    app: postgres-selector
+  pv:
+    name: postgres-pv
+  pvc:
+    name: postgres-pv-claim
+    storage: 1Gi
+
+replicaCount: 1
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  hosts:
+    - host: helm-chart.local
+      paths:
+        - path: /
+          pathType: Prefix
+          backend:
+          service:
+            name: user-svc
+            port:
+              number: 8090
+  tls: []
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
